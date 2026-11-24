@@ -1,0 +1,165 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile.name }} | Facebook</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<main class="profile-container">
+
+    <!-- COVER PHOTO -->
+    <section class="cover-section">
+        {% if profile.cover_photo %}
+            <img src="{{ profile.cover_photo.url }}" alt="Cover Photo" class="cover-photo">
+        {% else %}
+            <img src="{% static 'images/default-cover.jpg' %}" alt="Cover Photo" class="cover-photo">
+        {% endif %}
+    </section>
+
+    <!-- PROFILE HEADER -->
+    <section class="profile-header">
+
+        <div class="profile-picture-container">
+            {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="profile-picture">
+            {% else %}
+                <img src="{% static 'images/default-profile.png' %}" alt="Profile Picture" class="profile-picture">
+            {% endif %}
+        </div>
+
+        <div class="profile-info">
+            <div class="profile-heading">
+                <div>
+                    <h1>{{ profile.name }}</h1>
+                    <p class="bio">{{ profile.bio|default:"Add a short bio about yourself." }}</p>
+                    <p class="friend-count">120 Friends</p>
+                </div>
+
+                <a href="{% url 'edit_profile' %}" class="edit-button">
+                    Edit Profile
+                </a>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- PROFILE NAVIGATION -->
+    <nav class="profile-navigation">
+        <a href="#posts" class="active">Posts</a>
+        <a href="#photos">Photos</a>
+        <a href="#friend">Friends</a>
+
+        <a href="#about">About</a>
+    </nav>
+
+    <!-- PROFILE CONTENT -->
+    <section class="profile-content">
+
+        <!-- LEFT COLUMN: ABOUT -->
+        <div class="left-column">
+
+            <div class="content-card" id="about">
+                <h2>About</h2>
+
+                <div class="about-item">
+                    <span>📍</span>
+                    <p>Lives in <strong>{{ profile.location|default:"Not specified" }}</strong></p>
+                </div>
+
+                <div class="about-item">
+                    <span>💼</span>
+                    <p>Works at <strong>{{ profile.workplace|default:"Not specified" }}</strong></p>
+                </div>
+
+                <div class="about-item">
+                    <span>🎓</span>
+                    <p>Studied at <strong>{{ profile.school|default:"Not specified" }}</strong></p>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT COLUMN: POSTS -->
+        <div class="posts-section" id="posts">
+
+            <h2>Posts</h2>
+
+            <!-- CREATE POST -->
+            <div class="post-card create-post">
+                <form method="POST" action="{% url 'create_post' %}">
+                    {% csrf_token %}
+
+                    <div class="post-header">
+                        {% if profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}" alt="Profile" class="post-profile-picture">
+                        {% else %}
+                            <img src="{% static 'images/default-profile.png' %}" alt="Profile" class="post-profile-picture">
+                        {% endif %}
+
+                        <div>
+                            <h3>{{ profile.name }}</h3>
+                            <small>Public</small>
+                        </div>
+                    </div>
+
+                    <textarea
+                        name="content"
+                        placeholder="What's on your mind?"
+                        rows="3"
+                        required
+                    ></textarea>
+
+                    <button type="submit" class="publish-button">
+                        Post
+                    </button>
+                </form>
+            </div>
+
+            <!-- DISPLAY POSTS -->
+            {% for post in posts %}
+                <div class="post-card">
+
+                    <div class="post-header">
+                        {% if profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}" alt="Profile" class="post-profile-picture">
+                        {% else %}
+                            <img src="{% static 'images/default-profile.png' %}" alt="Profile" class="post-profile-picture">
+                        {% endif %}
+
+                        <div>
+                            <h3>{{ profile.name }}</h3>
+                            <small>{{ post.created_at|date:"M d, Y · h:i A" }} · Public</small>
+                        </div>
+                    </div>
+
+                    <p class="post-content">{{ post.content|linebreaksbr }}</p>
+
+                    <form method="POST" action="{% url 'delete_post' post.id %}" class="delete-post-form">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-post-button">
+                            Delete
+                        </button>
+                    </form>
+
+                </div>
+
+            {% empty %}
+                <div class="post-card empty-posts">
+                    <p>No posts yet. Share something!</p>
+                </div>
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+</html>

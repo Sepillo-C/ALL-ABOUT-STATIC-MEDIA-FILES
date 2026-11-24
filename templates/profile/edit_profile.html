@@ -1,0 +1,95 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Profile | Facebook</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+    <div class="edit-container">
+
+        <h1>Edit Profile</h1>
+        <p>Update your personal information and photos.</p>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <div class="edit-field">
+                <label>Full Name</label>
+                {{ form.name }}
+            </div>
+
+            <div class="edit-field">
+                <label>Bio</label>
+                {{ form.bio }}
+            </div>
+
+            <div class="edit-field">
+                <label>Location</label>
+                {{ form.location }}
+            </div>
+
+            <div class="edit-field">
+                <label>Workplace</label>
+                {{ form.workplace }}
+            </div>
+
+            <div class="edit-field">
+                <label>School</label>
+                {{ form.school }}
+            </div>
+
+            <div class="edit-field">
+                <label>Profile Picture</label>
+
+                {% if profile.profile_picture %}
+                    <img
+                        src="{{ profile.profile_picture.url }}"
+                        class="preview-profile"
+                        alt="Current profile picture"
+                    >
+                {% endif %}
+
+                {{ form.profile_picture }}
+            </div>
+
+            <div class="edit-field">
+                <label>Cover Photo</label>
+
+                {% if profile.cover_photo %}
+                    <img
+                        src="{{ profile.cover_photo.url }}"
+                        class="preview-cover"
+                        alt="Current cover photo"
+                    >
+                {% endif %}
+
+                {{ form.cover_photo }}
+            </div>
+
+            <div class="edit-buttons">
+
+                <button type="submit" class="save-button">
+                    Save Changes
+                </button>
+
+                <a href="{% url 'profile' %}" class="cancel-button">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</body>
+</html>
